@@ -1,0 +1,309 @@
+#!/bin/bash
+
+echo ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+echo Welcome to the calculator!
+echo You will be prompted to enter an operator and an operand.
+echo Type MS to store result in memory, M+ to add result to memory, MR to recall 1st or 2nd operand, and MC to clear memory.
+echo Type C to clear result and keep memory.
+echo Type X to exit to Unix.
+echo ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+first_time_running=0
+while true
+do
+case ${first_time_running} in
+
+        0)
+        # *****************************************************************************************************************
+        # CASE 0: "First Time Running", where user enters an operand, operator, and then an operand.
+        # CASE 0 OPERAND INPUT
+        # -------------------------------------------------------------------
+        until echo -n Enter operand:
+           read operand
+           [ "$operand" == "X" ] || [ $operand == "C" ] || [ $operand == "MR" ] || [ $operand == "MS" ] || [[ $operand =~ ^[+-]?[0-9]*$ ]] || [[ $operand =~ ^[+-]?[0-9]+\.?[0-9]*$ ]]
+        do
+                echo Invalid input, re-enter operand.
+        done
+
+
+        if [ "$operand" = "X" ]
+                then
+                   echo Goodbye
+                   break
+        fi
+
+        if [ "$operand" = "MR" ] && [ ! -z $memory_store ]
+                then
+                   operand=$memory_store
+                   echo "M --> "$operand""
+                else
+                        if [ -z $memory_store ] && [ "$operand" = "MR" ]
+                                then
+                                echo "No results in memory"
+                                continue
+                        fi
+        fi
+
+        if [ "$operand" = "C" ]
+                then
+                echo Results cleared.
+                continue
+        fi
+        # -----------------------------------------------------------------------
+
+
+
+        # CASE 0 OPERATOR INPUT
+        # -----------------------------------------------------------------------
+
+        until echo -n Enter operator:
+                read operator
+            [ "$operator" = "+" ] || [ "$operator" = "-" ] || [ "$operator" = "/" ] || [ "$operator" = "*" ] || [ "$operator" = "X" ] || [ "$operator" = "C" ] || [ "$operator" = "MC" ] || [ "$operator" = "MS" ] || [ "$operator" = "M+" ]
+        do
+                echo Invalid input, re-enter operator.
+        done
+
+        if [ "$operator" = "X" ]
+        then
+           echo Goodbye
+           exit
+        fi
+
+        if [ "$operator" = "C" ]
+                then
+                   echo Results cleared.
+                   continue
+        fi
+
+        if [ "$operator" = "MC" ]
+                then
+                   memory_store=0
+                   echo Results cleared
+
+                   until echo -n Enter operator:
+                      read operator
+                      [ "$operator" = "+" ] || [ "$operator" = "-" ] || [ "$operator" = "/" ] || [ "$operator" = "*" ] || [ "$operator" = "X" ] || [ "$operator" = "C" ] || [ "$operator" = "MC" ] || [ "$operator" = "MS" ] || [ "$operator" = "M+" ]
+                   do
+                      echo Invalid input, re-enter operator.
+ done
+        fi
+
+        if [ "$operator" = "MS" ]
+                then
+                echo No result calculated!
+
+                until echo -n Enter operator:
+                   read operator
+                   [ "$operator" = "+" ] || [ "$operator" = "-" ] || [ "$operator" = "/" ] || [ "$operator" = "*" ] || [ "$operator" = "X" ] || [ "$operator" = "C" ] || [ "$operator" = "MC" ] || [ "$operator" = "MS" ] || [ "$operator" = "M+" ]
+                do
+                   echo Invalid input, re-enter operator.
+                done
+        fi
+
+        if [ "$operator" = "M+" ] && [ ! -z $memory_store ]
+           then
+              previous=$memory_store
+              memory_store=$(echo "$memory_store + $result" | bc)
+              echo "$previous + $result = $memory_store --> M"
+        else
+                if [ -z $memory_store ] && [ "$operator" = "M+" ]
+                        then
+                                echo "No results in memory"
+                                until echo -n Enter operator:
+                                read operator
+                                [ "$operator" = "+" ] || [ "$operator" = "-" ] || [ "$operator" = "/" ] || [ "$operator" = "*" ] || [ "$operator" = "X" ] || [ "$operator" = "C" ] || [ "$operator" = "MC" ] || [ "$operator" = "MS" ]
+                                do
+                                        echo Invalid input, re-enter operand.
+                                done
+
+                        fi
+
+        fi
+
+        # -----------------------------------------------------------------------------
+
+        # CASE 0 SECOND OPERAND INPUT
+        # ---------------------------------------------------------------------------------------------
+        until echo -n Enter operand:
+           read second_operand
+           [ "$second_operand" == "X" ] || [ $second_operand == "MR" ] || [ $second_operand == "MS" ] || [[ $second_operand =~ ^[+-]?[0-9]*$ ]] || [[ $second_operand =~ ^[+-]?[0-9]+\.?[0-9]*$ ]] || [ "$second_operand" = "C" ]
+        do
+                echo Invalid input, re-enter operand.
+ done
+
+        if [ $second_operand = "0" ]  && [ "$operator" == "/" ]
+        then
+                echo WARNING: Division by zero not permitted. Please re-enter divisor.
+                until echo -n Enter operand:
+                   read second_operand
+                   [ "$second_operand" == "X" ] || [ $second_operand == "MR" ] || [ $second_operand == "MS" ] || [[ $second_operand =~ ^[+-]?[0-9]*$ ]] || [[ $second_operand =~ ^[+-]?[0-9]+\.?[0-9]*$ ]] || [ "$second_operand" = "C" ]
+                do
+                   echo Invalid input, re-enter operand.
+                done
+
+        fi
+
+
+        if [ "$second_operand" = "X" ]
+                then
+                echo Goodbye
+                exit
+        fi
+
+        if [ "$second_operand" = "MR" ]  && [ ! -z $memory_store ]
+                then
+                        second_operand=$memory_store
+                        echo "M --> "$second_operand""
+                else
+                        if [ -z $memory_store ] && [ "$second_operand" = "MR" ]
+                                then
+                                echo "No results in memory"
+                                until echo -n Enter operand:
+                                read second_operand
+                                [ "$second_operand" == "X" ] || [ $second_operand == "MR" ] || [ $second_operand == "MS" ] || [[ $second_operand =~ ^[+-]?[0-9]*$ ]] || [[ $second_operand =~ ^[+-]?[0-9]+\.?[0-9]*$ ]] || [ "$second_operand" = "C" ]
+                                do
+                                        echo Invalid input, re-enter operand.
+                                done
+
+                        fi
+        fi
+ if [ "$second_operand" = "C" ]
+                then
+                    echo Results cleared.
+                    continue
+        fi
+
+        result=$(echo "scale=3; $operand "$operator" $second_operand" | bc -l)
+        echo "$operand" "$operator" "$second_operand" = "$result"
+        first_time_running=1
+        ;;
+
+
+        # *************************************************************************************************************************8
+        # CASE 1: after the first case, where the previous result is used and the user enters the next operator, followed by the next operand.
+        1)
+        # CASE 1 OPERATOR INPUT
+        # -----------------------------------------------------------------------
+        while operand=$result
+                until echo -n Enter operator:
+                read operator
+        [ "$operator" == "+" ] || [ "$operator" == "-" ] || [ "$operator" == "/" ] || [ "$operator" == "*" ] || [ "$operator" = "X" ] || [ "$operator" = "MS" ] || [ "$operator" = "C" ] || [ "$operator" = "M+" ] || [ "$operator" == "MC" ] || [ "$operator" = "MR" ]
+                do
+                echo Invalid input, re-enter operator.
+                done
+
+
+
+                if [ "$operator" = "X" ]
+                        then
+                        echo Goodbye
+                        exit
+                fi
+
+                if [ "$operator" = "MC" ]
+                        then
+                            memory_store=0
+                            echo Results cleared.
+                            until echo -n Enter operator:
+                             read operator
+                             [ "$operator" = "+" ] || [ "$operator" = "-" ] || [ "$operator" = "/" ] || [ "$operator" = "*" ] || [ "$operator" = "X" ] || [ "$operator" = "C" ] || [ "$operator" = "MC" ] || [ "$operator" = "MS" ]
+
+                        do
+                                echo Invalid input, re-enter operator.
+                        done
+                fi
+ if [ "$operator" = "MS" ]
+                        then
+                           memory_store=$result
+                           result=$memory_store
+                           echo "M --> $memory_store"
+                           continue
+                fi
+
+                if [ "$operator" = "C" ]
+                        then
+                           result=0
+                           first_time_running=0
+                           echo Results cleared.
+                           break
+                fi
+
+
+                if [ "$operator" = "M+" ] && [ ! -z $memory_store ]
+                then
+                        previous=$memory_store
+                        memory_store=$(echo "$memory_store + $result" | bc)
+                        echo "$previous + $result = $memory_store --> M"
+                        continue
+                else
+                        if [ -z $memory_store ] && [ "$operator" = "M+" ]
+                        then
+                                echo "No results in memory"
+
+                                until echo -n Enter operator:
+                                read operator
+                                [ "$operator" = "+" ] || [ "$operator" = "-" ] || [ "$operator" = "/" ] || [ "$operator" = "*" ] || [ "$operator" = "X" ] || [ "$operator" = "C" ] || [ "$operator" = "MC" ] || [ "$operator" = "MS" ]
+                                do
+                                        echo Invalid input, re-enter operand.
+                                done
+
+                        fi
+
+                fi
+                # ----------------------------------------------------------------------------------------
+
+
+
+                # CASE 1 SECOND OPERAND INPUT
+                # -------------------------------------------------------------------------------
+                until echo -n Enter operand:
+                read second_operand
+ [ "$second_operand" == "X" ] || [ $second_operand == "MR" ] || [ $second_operand == "MS" ] || [[ $second_operand =~ ^[+-]?[0-9]*$ ]] || [[ $second_operand =~ ^[+-]?[0-9]+\.?[0-9]*$ ]] || [ "$second_operand" = "C" ]
+                do
+                echo Invalid input, re-enter operand.
+                done
+
+                if [ $second_operand = "0" ]  && [ "$operator" == "/" ]
+                        then
+                        echo WARNING: Division by zero not permitted. Please re-enter divisor.
+                        until echo -n Enter operand:
+                        read second_operand
+                        [ "$second_operand" == "X" ] || [ $second_operand == "MR" ] || [ $second_operand == "MS" ] || [[ $second_operand =~ ^[+-]?[0-9]*$ ]] || [[ $second_operand =~ ^[+-]?[0-9]+\.?[0-9]*$ ]] || [ "$second_operand" = "C" ]
+                        do
+                                echo Invalid input, re-enter operand.
+                        done
+                fi
+
+
+                if [ "$second_operand" = "X" ]
+                        then
+                                echo Goodbye
+                                exit
+                fi
+
+                if [ "$second_operand" = "MR" ]  && [ ! -z $memory_store ]
+                then
+                        second_operand=$memory_store
+                        echo "M --> "$second_operand""
+                else
+                        if [ -z $memory_store ] && [ "$second_operand" = "MR" ]
+                                then
+                                echo "No results in memory"
+                                break
+                        fi
+                fi
+ if [ "$second_operand" = "C" ]
+                        then
+                        result=0
+                        first_time_running=0
+                        echo Results cleared.
+                        break
+                fi
+
+
+        do
+                result=$(echo "scale=3; $operand "$operator" $second_operand" | bc -l)
+                echo "$operand" "$operator" "$second_operand" = "$result"
+        done
+        ;;
+esac
+done
